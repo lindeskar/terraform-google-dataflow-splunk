@@ -2,26 +2,26 @@
 # Required input variables
 
 variable "gcp_region" {
-  description = "The GCP region where you want Dataflow running (ex. europe-west1)"
+  description = "The GCP region where you want Dataflow running (e.g. europe-west1)"
   type    = string
 }
 
 variable "gcp_zone" {
-  description = "The GCP zone where you want Dataflow running (ex. europe-west1-b)"
+  description = "The GCP zone where you want Dataflow running (e.g. europe-west1-b)"
   type    = string
 }
 variable "gcp_log_project" {
-  description = "The GCP project where you want Dataflow running (ex. my-logging-project)"
+  description = "The GCP project where you want Dataflow running (e.g. my-logging-project)"
   type    = string
 }
 
 variable "splunk_hec_url" {
-  description = "The HEC endpoint URL for Dataflow to use (ex. https://splunk.example.com:8088)"
+  description = "The HEC endpoint URL for Dataflow to use (e.g. https://splunk.example.com:8088)"
   type    = string
 }
 
 variable "splunk_hec_token" {
-  description = "The HEC token for Dataflow to use (ex. 5fbfabb9-f788-4b0c-8af3-18584776f9c3)"
+  description = "The HEC token for Dataflow to use (e.g. 5fbfabb9-f788-4b0c-8af3-18584776f9c3)"
   type    = string
 }
 
@@ -34,7 +34,7 @@ variable "log_sink_org_enable" {
 }
 
 variable "log_sink_org_id" {
-  description = "The GCP organization ID that you want Splunk to receive logs from (ex. 123456789012)"
+  description = "The GCP organization ID that you want Splunk to receive logs from (e.g. 123456789012)"
   type    = string
   default = ""
 }
@@ -46,13 +46,13 @@ variable "log_sink_proj_enable" {
 }
 
 variable "log_sink_proj_name" {
-  description = "The GCP project that you want Splunk to receive logs from (ex. my-primary-project)"
+  description = "The GCP project that you want Splunk to receive logs from (e.g. my-primary-project)"
   type    = string
   default = ""
 }
 
 variable "dataflow_base_name" {
-  description = "A base name for the objects to create for Dataflow (ex. splunk-dataflow)"
+  description = "A base name for the objects to create for Dataflow (e.g. splunk-dataflow)"
   type    = string
   default = "dataflow-splunk"
 }
@@ -70,7 +70,7 @@ variable "dataflow_job_enable" {
 }
 
 variable "dataflow_worker_machine_type" {
-  description = "Machine type for the Dataflow workers (ex. e2-medium)"
+  description = "Machine type for the Dataflow workers (e.g. e2-medium)"
   type    = string
   default = "e2-medium"
 }

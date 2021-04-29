@@ -9,11 +9,11 @@ Terraform module for setup of GCP logging to Splunk using Dataflow.
 ## Configuration
 
 ### Required input variables
-- `gcp_region` - The GCP region where you want Dataflow running (ex. `europe-west1`)
-- `gcp_zone` - The GCP zone where you want Dataflow running (ex. `europe-west1-b`)
-- `gcp_log_project` - The GCP project where you want Dataflow running (ex. `my-logging-project`)
-- `splunk_hec_url` - The HEC endpoint URL for Dataflow to use (ex. `https://splunk.example.com:8088`)
-- `splunk_hec_token` - The HEC token for Dataflow to use (ex. `5fbfabb9-f788-4b0c-8af3-18584776f9c3`)
+- `gcp_region` - The GCP region where you want Dataflow running (e.g. `europe-west1`)
+- `gcp_zone` - The GCP zone where you want Dataflow running (e.g. `europe-west1-b`)
+- `gcp_log_project` - The GCP project where you want Dataflow running (e.g. `my-logging-project`)
+- `splunk_hec_url` - The HEC endpoint URL for Dataflow to use (e.g. `https://splunk.example.com:8088`)
+- `splunk_hec_token` - The HEC token for Dataflow to use (e.g. `5fbfabb9-f788-4b0c-8af3-18584776f9c3`)
 
 ### Optional input variables
 (see description in `variables.tf`)
