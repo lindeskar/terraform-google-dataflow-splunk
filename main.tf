@@ -58,6 +58,7 @@ resource "google_logging_project_sink" "log-proj-sink" {
     dataflow_name  = var.dataflow_job_enable == 1 ? google_dataflow_job.splunk-job[0].name : ""
   })
 
+  unique_writer_identity = true
   destination = "pubsub.googleapis.com/${google_pubsub_topic.log-topic.id}"
 }
 
