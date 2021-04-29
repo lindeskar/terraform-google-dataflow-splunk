@@ -1,0 +1,1 @@
+logName:"organizations/${org_id}/logs/" OR logName:"projects/${log_project}/logs/" %{ for e_proj in extra_projects ~} OR logName:"projects/${e_proj}/logs/" %{ endfor ~} NOT (resource.type = "dataflow_step" AND resource.labels.job_name = "${dataflow_name}")
