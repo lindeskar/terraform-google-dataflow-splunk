@@ -19,7 +19,7 @@ resource "google_pubsub_subscription" "log-sub" {
   project = var.gcp_log_project
   topic   = google_pubsub_topic.log-topic.name
 
-  message_retention_duration = "1200s"
+  message_retention_duration = var.pubsub_msg_retention
 }
 
 resource "google_pubsub_subscription" "log-dl-sub" {
@@ -27,7 +27,7 @@ resource "google_pubsub_subscription" "log-dl-sub" {
   project = var.gcp_log_project
   topic   = google_pubsub_topic.log-dl-topic.name
 
-  message_retention_duration = "1200s"
+  message_retention_duration = var.pubsub_msg_retention
 }
 
 
@@ -35,34 +35,53 @@ resource "google_pubsub_subscription" "log-dl-sub" {
 
 resource "google_logging_organization_sink" "log-org-sink" {
   name  = "${var.dataflow_base_name}-log-org-sink"
-  count = var.log_sink_org_id == "" ? 0 : 1
+  count = var.log_sink_org_enable == 1 ? 1 : 0
 
   org_id           = var.log_sink_org_id
   include_children = true
-  filter = templatefile("${path.module}/dataflow-sink-filter-catchall.tpl", {
+  filter = templatefile("${path.module}/log-org-sink-filter-catchall.tpl", {
     org_id         = var.log_sink_org_id,
     log_project    = var.gcp_log_project,
-    extra_projects = var.log_sink_org_filter_projects,
-    dataflow_name  = var.dataflow_enable == 1 ? google_dataflow_job.splunk-job[0].name : ""
+    dataflow_name  = var.dataflow_job_enable == 1 ? google_dataflow_job.splunk-job[0].name : ""
   })
 
   destination = "pubsub.googleapis.com/${google_pubsub_topic.log-topic.id}"
 }
 
-## Add project log sink ?
+resource "google_logging_project_sink" "log-proj-sink" {
+  name  = "${var.dataflow_base_name}-log-proj-sink"
+  count = var.log_sink_proj_enable == 1 ? 1 : 0
+
+  project                     = var.log_sink_proj_name
+  filter = templatefile("${path.module}/log-proj-sink-filter-catchall.tpl", {
+    log_project    = var.gcp_log_project,
+    dataflow_name  = var.dataflow_job_enable == 1 ? google_dataflow_job.splunk-job[0].name : ""
+  })
+
+  destination = "pubsub.googleapis.com/${google_pubsub_topic.log-topic.id}"
+}
 
 
 # Pub/Sub topic IAM policy
 
-resource "google_pubsub_topic_iam_member" "log-topic-sink-member" {
+resource "google_pubsub_topic_iam_member" "log-org-topic-sink-member" {
+  count = var.log_sink_org_enable == 1 ? 1 : 0
   project = google_pubsub_topic.log-topic.project
   topic   = google_pubsub_topic.log-topic.name
   role    = "roles/pubsub.publisher"
   member  = google_logging_organization_sink.log-org-sink.0.writer_identity
 }
 
+resource "google_pubsub_topic_iam_member" "log-proj-topic-sink-member" {
+  count = var.log_sink_proj_enable == 1 ? 1 : 0
+  project = google_pubsub_topic.log-topic.project
+  topic   = google_pubsub_topic.log-topic.name
+  role    = "roles/pubsub.publisher"
+  member  = google_logging_project_sink.log-proj-sink.0.writer_identity
+}
 
-# Bucket for temp storage
+
+# Bucket for Dataflow temp storage
 
 resource "google_storage_bucket" "log-bucket" {
   name                        = "${var.dataflow_base_name}-log-bucket"
@@ -89,10 +108,10 @@ resource "google_storage_bucket_object" "splunk-udf" {
 }
 
 
-# Dataflow
+# Dataflow job
 resource "google_dataflow_job" "splunk-job" {
-  name         = "${var.dataflow_base_name}-splunk-job"
-  count        = var.dataflow_enable == 1 ? 1 : 0
+  name         = "${var.dataflow_base_name}-job"
+  count        = var.dataflow_job_enable == 1 ? 1 : 0
   project      = var.gcp_log_project
   region       = var.gcp_region
   zone         = var.gcp_zone
